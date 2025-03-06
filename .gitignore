@@ -1,0 +1,12 @@
+# Remove the .env file from Git history
+git rm --cached backend/.env
+
+# Add .env to .gitignore to prevent future commits
+echo "backend/.env" >> .gitignore
+
+# Commit the changes
+git add .gitignore
+git commit -m "Removed .env file and added to .gitignore"
+
+# Force push to overwrite history (Be cautious when using --force)
+git push origin main --force
