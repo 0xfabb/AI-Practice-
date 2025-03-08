@@ -1,11 +1,22 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const GenerateContent = () => {
+  const navigate = useNavigate();
   const [question, setQuestion] = useState("");
   const [responseList, setResponseList] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const userData = JSON.parse(localStorage.getItem("User")) || {};
+  const username = userData.username || "null";
+  console.log(userData);
+
+  useEffect(() => {
+    if (!userData || !userData.username) {
+      navigate("/signin");
+    }
+  }, []);
 
   const fetchData = async () => {
     if (!question.trim()) {
@@ -17,7 +28,7 @@ const GenerateContent = () => {
     setError("");
 
     try {
-      const res = await axios.post("http://localhost:3000/generate", {
+      const res = await axios.post("http://localhost:3003/generate", {
         question,
       });
       const newResponse = res.data;
@@ -34,7 +45,7 @@ const GenerateContent = () => {
 
   const fetchPreviousResponses = async () => {
     try {
-      const res = await axios.get("http://localhost:3000/responses");
+      const res = await axios.get("http://localhost:3003/responses");
       setResponseList(res.data);
     } catch (err) {
       console.error("Error fetching responses:", err);
@@ -50,7 +61,7 @@ const GenerateContent = () => {
     <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-[#4f8a1e] via-[#3bf6b8] to-[#73ea33] p-6">
       <div className="bg-white/10 backdrop-blur-lg p-8 rounded-3xl shadow-xl max-w-2xl w-full text-center">
         <h1 className="text-4xl font-extrabold text-white mb-6">
-          AI Content Generator
+          Hello {username}, from AI Content Generator
         </h1>
 
         <div className="relative w-full max-w-xl mx-auto mb-6">

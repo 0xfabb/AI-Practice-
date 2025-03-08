@@ -5,6 +5,7 @@ const { GoogleGenerativeAI } = require("@google/generative-ai");
 require("dotenv").config();
 require("./connection");
 const mongoose = require("mongoose");
+const { type } = require("os");
 
 const app = express();
 
@@ -20,6 +21,19 @@ const aiResponseSchema = new mongoose.Schema({
   response: String,
   timestamp: { type: Date, default: Date.now },
 });
+
+const userSchema = new mongoose.Schema({
+  username: {
+      type: String,
+      required: true
+    },
+    gender: {
+      type: String,
+      required: true
+    }
+  })
+
+  const User = mongoose.model("User", userSchema);
 
 const AIResponse = mongoose.model("AIResponse", aiResponseSchema);
 
@@ -57,7 +71,30 @@ app.get("/responses", async (req, res) => {
   }
 });
 
-const PORT = 3000;
+
+
+
+app.post("/signin", async (req,res)=>{
+  const {username, gender} = req.body;
+  if (!username || !gender) {
+    return res.status(400).json({ message: "Fill all the details" });
+  }
+  try{
+    const newUser = new User({username, gender})
+    await newUser.save()
+    res.status(201).json({ message: "User registered successfully", user: newUser });
+  }
+  catch (error) {
+    res.status(500).json({ message: "Error saving user", error: error.message });
+  }
+})
+
+
+
+
+
+
+const PORT = 3003;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
