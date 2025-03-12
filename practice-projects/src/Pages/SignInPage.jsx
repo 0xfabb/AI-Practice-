@@ -12,7 +12,7 @@ export default function SignInPage() {
     console.log(data);
   };
   const user = JSON.parse(localStorage.getItem("User"));
-  
+
   if (!user) {
     navigate("/generate");
   }

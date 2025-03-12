@@ -24,16 +24,16 @@ const aiResponseSchema = new mongoose.Schema({
 
 const userSchema = new mongoose.Schema({
   username: {
-      type: String,
-      required: true
-    },
-    gender: {
-      type: String,
-      required: true
-    }
-  })
+    type: String,
+    required: true,
+  },
+  gender: {
+    type: String,
+    required: true,
+  },
+});
 
-  const User = mongoose.model("User", userSchema);
+const User = mongoose.model("User", userSchema);
 
 const AIResponse = mongoose.model("AIResponse", aiResponseSchema);
 
@@ -71,27 +71,38 @@ app.get("/responses", async (req, res) => {
   }
 });
 
-
-
-
-app.post("/signin", async (req,res)=>{
-  const {username, gender} = req.body;
+app.post("/signin", async (req, res) => {
+  const { username, gender } = req.body;
   if (!username || !gender) {
     return res.status(400).json({ message: "Fill all the details" });
   }
-  try{
-    const newUser = new User({username, gender})
-    await newUser.save()
-    res.status(201).json({ message: "User registered successfully", user: newUser });
+  try {
+    const newUser = new User({ username, gender });
+    await newUser.save();
+    res
+      .status(201)
+      .json({ message: "User registered successfully", user: newUser });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Error saving user", error: error.message });
   }
-  catch (error) {
-    res.status(500).json({ message: "Error saving user", error: error.message });
-  }
+});
+
+app.get("/doctors", (req,res)=> {
+  res.send("Here is the List of all the Doctors in the City")
+});
+
+const patients = []
+const categories = []
+app.post("/addpatient",(req,res)=> {
+  const { patientName, category }  = req.body;
+  patients.push(patientName)
+  categories.push(category)
+  res.send( 
+    `List of All Patients - ${patients} & category ${categories}`
+  )
 })
-
-
-
-
 
 
 const PORT = 3003;
